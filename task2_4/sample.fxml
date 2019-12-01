@@ -1,0 +1,38 @@
+
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.layout.HBox?>
+
+<BorderPane fx:controller="task2_4.Controller"
+            xmlns:fx="http://javafx.com/fxml">
+
+
+    <top>
+        <MenuBar>
+            <Menu text="File">
+                <MenuItem text="Close" onAction="#onActionClose"/>
+            </Menu>
+            <Menu text="Edit">
+                <MenuItem text="Clear chat" onAction="#clearChat"/>
+            </Menu>
+        </MenuBar>
+    </top>
+    <center>
+        <TextArea fx:id="textArea">
+
+        </TextArea>
+    </center>
+    <bottom>
+        <HBox spacing="10">
+            <TextField fx:id="textField" onKeyPressed="#handleEnterPressed" prefHeight="40" HBox.hgrow="ALWAYS"/>
+            <Button fx:id="btnSend" prefWidth="100" prefHeight="40" text="Send" onAction="#sendText"/>
+        </HBox>
+    </bottom>
+
+</BorderPane>
