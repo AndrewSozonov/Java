@@ -1,9 +1,8 @@
 package server;
 
-import java.sql.SQLException;
-
 public interface AuthService {
-    String getNicknameByLoginAndPassword(String login, String password) throws SQLException;
-    boolean registration(String login, String password, String nickname) throws SQLException;
-    void changeNick(String nick, String newNick) throws SQLException;
+    String getNicknameByLoginAndPassword(String login, String password);
+    boolean registration(String login, String password, String nickname);
+
+    boolean changeNick(String oldNickname, String newNickname);
 }

@@ -19,9 +19,7 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.stage.WindowEvent;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.Socket;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -121,6 +119,8 @@ public class Controller implements Initializable {
                     }
 
                     setTitle("Chat : " + nickname);
+                    File historyFile = new File ("history_" + nickname + ".txt");
+
                     // цикл работы
                     while (true) {
                         String str = in.readUTF();
@@ -138,12 +138,23 @@ public class Controller implements Initializable {
                                     }
                                 });
                             }
+                            if (str.startsWith("/yournickis ")) {
+                                nickname = str.split(" ")[1];
+                            }
+
                         } else {
+
+                            //Запись истории сообщений в файл
                             textArea.appendText(str + "\n");
+                            try (FileWriter historyOut = new FileWriter(historyFile, true)) {
+                                historyOut.write(str + System.lineSeparator());
+                            } catch (IOException err) {
+                                System.out.println("Ошибка записи истории");
+                            }
                         }
                     }
-                } catch (RuntimeException e) {  //////////
-                    System.out.println("bue time out");  //////////
+                } catch (RuntimeException e) {
+                    System.out.println("bue time out");
                 } catch (IOException e) {
                     e.printStackTrace();
                 } finally {

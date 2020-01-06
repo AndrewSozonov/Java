@@ -15,7 +15,12 @@ public class Server {
 
     public Server() {
         clients = new Vector<>();
-        authService = new AdvancedAuthService();
+//        authService = new SimpleAuthService();
+        if (!SQLHandler.connect()) {
+            throw new RuntimeException("Не удалось подключиться к БД");
+        }
+        authService = new DBAuthServise();
+
         ServerSocket server = null;
         Socket socket = null;
 
@@ -23,15 +28,16 @@ public class Server {
             server = new ServerSocket(8189);
             System.out.println("Сервер запущен");
 
-            while (true){
+            while (true) {
                 socket = server.accept();
                 System.out.println("Клиент подключился");
-                new ClientHandler(this,socket);
+                new ClientHandler(this, socket);
             }
 
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
+            SQLHandler.disconnect();
             try {
                 server.close();
             } catch (IOException e) {
@@ -40,53 +46,53 @@ public class Server {
         }
     }
 
-    public void broadcastMsg(String nick, String msg){
-        for (ClientHandler c:clients ) {
-            c.sendMsg( nick +" : "+  msg);
+    public void broadcastMsg(String nick, String msg) {
+        for (ClientHandler c : clients) {
+            c.sendMsg(nick + " : " + msg);
         }
     }
 
-    public void privateMsg(ClientHandler sender, String receiver, String msg){
+    public void privateMsg(ClientHandler sender, String receiver, String msg) {
         String message = String.format("[ %s ] private [ %s ] : %s",
                 sender.getNick(), receiver, msg);
 
-        for (ClientHandler c:clients ) {
-            if(c.getNick().equals(receiver)){
+        for (ClientHandler c : clients) {
+            if (c.getNick().equals(receiver)) {
                 c.sendMsg(message);
                 sender.sendMsg(message);
                 return;
             }
         }
-        sender.sendMsg("Пользователь с ником: "+ receiver +" не найден");
+        sender.sendMsg("Пользователь с ником: " + receiver + " не найден");
     }
 
-    public void subscribe(ClientHandler clientHandler){
+    public void subscribe(ClientHandler clientHandler) {
         clients.add(clientHandler);
         broadcastClientlist();
     }
 
-    public void unsubscribe(ClientHandler clientHandler){
+    public void unsubscribe(ClientHandler clientHandler) {
         clients.remove(clientHandler);
         broadcastClientlist();
     }
 
-    public boolean isLoginAuthorized(String login){
-        for (ClientHandler c:clients ) {
-            if (c.getLogin().equals(login)){
+    public boolean isLoginAuthorized(String login) {
+        for (ClientHandler c : clients) {
+            if (c.getLogin().equals(login)) {
                 return true;
             }
         }
         return false;
     }
 
-    public void broadcastClientlist(){
+    public void broadcastClientlist() {
         StringBuilder sb = new StringBuilder("/clientlist ");
-        for (ClientHandler c:clients ) {
-            sb.append(c.getNick()+" ");
+        for (ClientHandler c : clients) {
+            sb.append(c.getNick() + " ");
         }
 
         String msg = sb.toString();
-        for (ClientHandler c:clients ) {
+        for (ClientHandler c : clients) {
             c.sendMsg(msg);
         }
     }
