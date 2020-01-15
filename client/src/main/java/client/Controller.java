@@ -19,7 +19,9 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.stage.WindowEvent;
 
-import java.io.*;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.net.Socket;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -52,6 +54,7 @@ public class Controller implements Initializable {
 
     private boolean isAuthenticated;
     private String nickname;
+    private String login;
 
     public void setAuthenticated(boolean authenticated) {
         isAuthenticated = authenticated;
@@ -63,6 +66,8 @@ public class Controller implements Initializable {
         clientList.setManaged(isAuthenticated);
         if (!isAuthenticated) {
             nickname = "";
+            History.stop();   ///////////////////
+            textArea.clear(); ///////////////////
         }
     }
 
@@ -108,19 +113,21 @@ public class Controller implements Initializable {
                         if (str.startsWith("/authok")) {
                             setAuthenticated(true);
                             nickname = str.split(" ")[1];
+
+                            /////////////////
+                            textArea.clear();
+                            textArea.appendText(History.getLast100LinesOfHistory(login));
+                            History.start(login);
+
                             break;
                         }
-/////////////////
                         if (str.equals("/end")) {
                             throw new RuntimeException("отключаемся");
                         }
- ////////////////
                         textArea.appendText(str + "\n");
                     }
 
                     setTitle("Chat : " + nickname);
-                    File historyFile = new File ("history_" + nickname + ".txt");
-
                     // цикл работы
                     while (true) {
                         String str = in.readUTF();
@@ -143,14 +150,8 @@ public class Controller implements Initializable {
                             }
 
                         } else {
-
-                            //Запись истории сообщений в файл
                             textArea.appendText(str + "\n");
-                            try (FileWriter historyOut = new FileWriter(historyFile, true)) {
-                                historyOut.write(str + System.lineSeparator());
-                            } catch (IOException err) {
-                                System.out.println("Ошибка записи истории");
-                            }
+                            History.writeLine(str);//////////////
                         }
                     }
                 } catch (RuntimeException e) {
@@ -191,6 +192,9 @@ public class Controller implements Initializable {
 
         try {
             out.writeUTF("/auth " + loginField.getText() + " " + passwordField.getText());
+
+            login = loginField.getText();////////////////
+
             loginField.clear();
             passwordField.clear();
         } catch (IOException e) {
@@ -200,7 +204,6 @@ public class Controller implements Initializable {
     }
 
     public void clickClientList(MouseEvent mouseEvent) {
-//        System.out.println(clientList.getSelectionModel().getSelectedItem());
         String receiver = clientList.getSelectionModel().getSelectedItem();
         textField.setText("/w " + receiver + " ");
     }
