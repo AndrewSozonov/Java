@@ -1,0 +1,19 @@
+zzzz : sdfasdf sadf
+zzzz : sa dfsadf s
+zzzz : asdf sad fasdf
+zzzz : as df sdaf 
+[ nick1 ] private [ zzzz ] : sad sdf 
+nick1 : asdf sadf
+nick1 : asdf sadf
+[ nick1 ] private [ zzzz ] : asdadsfasd 
+zzzz : asdfasdfasdfsadfsad
+[ zzzz ] private [ nick1 ] : aaaaaaaaaa
+nick1 : mmmmm
+nick1 : mmmm
+zzzz : mmmm
+zzzz : mmm
+[ zzzz ] private [ nick1 ] : bbbbb
+[ nick1 ] private [ zzzz ] : bbbbbbb
+zzzz : sadfsadf
+zzzz : уке цуке уцке у
+zzzz : цук еуцке уцк
